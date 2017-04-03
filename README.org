@@ -1,0 +1,30 @@
+#+TITLE: Linux日常困惑笔记
+
+* 如何查看程序是否安装
+  使用which命令只能查看可执行程序是否安装，但如python3-jedi这样的程序
+  无法知晓，所以使用dkpg的--list参数：
+  
+  #+BEGIN_SRC sh :session
+    dpkg --list
+  #+END_SRC
+  
+  但只能查看所有已安装程序，如需过滤还要配合tr，cut/awk和grep程序：
+  
+  #+BEGIN_SRC sh :session
+    dpkg --list | tr -s ' ' | cut --delimiter=' ' --field=2 | grep python3-jedi
+  #+END_SRC
+  
+  #+RESULTS:
+  : python3-jedi
+  
+  此处tr使用了-s参数，将连续的空格字符转换为了单个空格字符，再利用cut
+  程序剪切了程序名所在的列。
+  
+  据说更高级的用法是使用awk，参考自 [[http://stackoverflow.com/questions/7142735/linux-cut-help-how-to-specify-more-spaces-for-the-delimiter][stackoverflow]] ：
+  
+  #+BEGIN_SRC sh :session
+    dpkg --list | awk '{print $2}' | grep ^python3-jedi$
+  #+END_SRC
+  
+  #+RESULTS:
+  : python3-jedi
